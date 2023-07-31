@@ -1076,6 +1076,13 @@ var EthSendRawTransaction = MethodTests{
 	},
 }
 
+// EthSendRawTransactionConditional stores a list of all tests against the method.
+var EthSendRawTransactionConditional = MethodTests{
+	"eth_sendRawTransactionConditional",
+	[]Test{
+	},
+}
+
 // EthGasPrice stores a list of all tests against the method.
 var EthGasPrice = MethodTests{
 	"eth_gasPrice",
