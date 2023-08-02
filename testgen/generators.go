@@ -19,7 +19,9 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/ethclient/gethclient"
 	"github.com/ethereum/go-ethereum/params"
+	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/ethereum/go-ethereum/policy"
 )
 
 var (
@@ -1080,6 +1082,47 @@ var EthSendRawTransaction = MethodTests{
 var EthSendRawTransactionConditional = MethodTests{
 	"eth_sendRawTransactionConditional",
 	[]Test{
+		{
+			"send-legacy-transaction-conditional",
+			"sends a raw legacy transaction conditional",
+			func(ctx context.Context, t *T) error {
+				genesis := t.chain.Genesis()
+				state, _ := t.chain.State()
+				txdata := &types.LegacyTx{
+					Nonce:    state.GetNonce(addr),
+					To:       &common.Address{0xaa},
+					Value:    big.NewInt(10),
+					Gas:      25000,
+					GasPrice: new(big.Int).Add(genesis.BaseFee(), big.NewInt(1)),
+					Data:     common.FromHex("5544"),
+				}
+				s := types.MakeSigner(t.chain.Config(), t.chain.CurrentHeader().Number)
+				tx, _ := types.SignNewTx(pk, s, txdata)
+				data, err := rlp.EncodeToBytes(tx) 
+				if err != nil {
+					return err
+				}
+				hexData := hexutil.Bytes(data)
+				txOptions := &policy.TxOptions{
+				KnownAccounts: map[common.Address]policy.KnownAccount{
+					common.Address{19: 1}: policy.KnownAccount{
+						StorageSlots: map[common.Hash]common.Hash{
+							common.Hash{}: common.Hash{31: 1},
+						},
+					},
+					common.Address{19: 2}: policy.KnownAccount{
+						StorageSlots: map[common.Hash]common.Hash{
+							common.Hash{}: common.Hash{31: 2},
+						},
+					},
+				},
+			}
+				if err := t.eth.SendRawTransactionConditional(ctx, hexData, txOptions); err != nil {
+					return err
+				}
+				return nil
+			},
+		},
 	},
 }
 
