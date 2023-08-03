@@ -85,6 +85,7 @@ var AllMethods = []MethodTests{
 	EthGetTransactionReceipt,
 	EthGetBlockReceipts,
 	EthSendRawTransaction,
+	EthSendRawTransactionConditional,
 	EthGasPrice,
 	EthMaxPriorityFeePerGas,
 	EthSyncing,
