@@ -85,6 +85,7 @@ var AllMethods = []MethodTests{
 	EthGetTransactionReceipt,
 	EthGetBlockReceipts,
 	EthSendRawTransaction,
+	EthSendRawTransactionConditional,
 	EthGasPrice,
 	EthMaxPriorityFeePerGas,
 	EthSyncing,
@@ -1079,6 +1080,8 @@ var EthSendRawTransaction = MethodTests{
 }
 
 // EthSendRawTransactionConditional stores a list of all tests against the method.
+//>> {"jsonrpc":"2.0","id":1,"method":"eth_sendRawTransactionConditional","params":["0xf8670d843b9aca018261a894aa000000000000000000000000000000000000000a825544820a96a02b0f4e72ce6c108bda31bacfa2feb14dbb1293d6145f40ea57dedc5f80fbabdfa00f8dd40744a1bf6f1adf60bd56df07d4cd72886b4a1da639e1c436e031d93f41",{"knownAccounts":null,"blockNumberMin":"0x1","blockNumberMax":"0xa"}]}
+//<< {"jsonrpc":"2.0","id":1,"result":"0xbbb6c30550dee8bbd06766ab597e2fe410b881eb0a1b6be4c6880a48b8ef602e"}
 var EthSendRawTransactionConditional = MethodTests{
 	"eth_sendRawTransactionConditional",
 	[]Test{
@@ -1089,7 +1092,7 @@ var EthSendRawTransactionConditional = MethodTests{
 				genesis := t.chain.Genesis()
 				state, _ := t.chain.State()
 				txdata := &types.LegacyTx{
-					Nonce:    state.GetNonce(addr),
+					Nonce:    state.GetNonce(addr) + 4,
 					To:       &common.Address{0xaa},
 					Value:    big.NewInt(10),
 					Gas:      25000,
@@ -1103,20 +1106,7 @@ var EthSendRawTransactionConditional = MethodTests{
 					return err
 				}
 				hexData := hexutil.Bytes(data)
-				txOptions := policy.TxOptions{
-				KnownAccounts: map[common.Address]policy.KnownAccount{
-					common.Address{19: 1}: policy.KnownAccount{
-						StorageSlots: map[common.Hash]common.Hash{
-							common.Hash{}: common.Hash{31: 1},
-						},
-					},
-					common.Address{19: 2}: policy.KnownAccount{
-						StorageSlots: map[common.Hash]common.Hash{
-							common.Hash{}: common.Hash{31: 2},
-						},
-					},
-				},
-			}
+				txOptions := policy.TxOptions{BlockNumberMin: big.NewInt(1), BlockNumberMax: big.NewInt(10)}
 				if err := t.eth.SendRawTransactionConditional(ctx, hexData, txOptions); err != nil {
 					return err
 				}
