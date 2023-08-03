@@ -1093,7 +1093,7 @@ var EthSendRawTransactionConditional = MethodTests{
 					Nonce:    state.GetNonce(addr),
 					To:       &common.Address{0xaa},
 					Value:    big.NewInt(10),
-					Gas:      25000,
+					Gas:      25001,
 					GasPrice: new(big.Int).Add(genesis.BaseFee(), big.NewInt(1)),
 					Data:     common.FromHex("5544"),
 				}
