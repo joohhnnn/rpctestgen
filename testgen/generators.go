@@ -1103,7 +1103,7 @@ var EthSendRawTransactionConditional = MethodTests{
 					return err
 				}
 				hexData := hexutil.Bytes(data)
-				txOptions := &policy.TxOptions{
+				txOptions := policy.TxOptions{
 				KnownAccounts: map[common.Address]policy.KnownAccount{
 					common.Address{19: 1}: policy.KnownAccount{
 						StorageSlots: map[common.Hash]common.Hash{
