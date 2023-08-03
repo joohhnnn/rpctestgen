@@ -1090,10 +1090,10 @@ var EthSendRawTransactionConditional = MethodTests{
 				genesis := t.chain.Genesis()
 				state, _ := t.chain.State()
 				txdata := &types.LegacyTx{
-					Nonce:    state.GetNonce(addr),
+					Nonce:    state.GetNonce(addr) + 4,
 					To:       &common.Address{0xaa},
 					Value:    big.NewInt(10),
-					Gas:      25001,
+					Gas:      25000,
 					GasPrice: new(big.Int).Add(genesis.BaseFee(), big.NewInt(1)),
 					Data:     common.FromHex("5544"),
 				}
