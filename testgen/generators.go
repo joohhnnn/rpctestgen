@@ -1104,20 +1104,7 @@ var EthSendRawTransactionConditional = MethodTests{
 					return err
 				}
 				hexData := hexutil.Bytes(data)
-				txOptions := policy.TxOptions{
-				KnownAccounts: map[common.Address]policy.KnownAccount{
-					common.Address{19: 1}: policy.KnownAccount{
-						StorageSlots: map[common.Hash]common.Hash{
-							common.Hash{}: common.Hash{31: 1},
-						},
-					},
-					common.Address{19: 2}: policy.KnownAccount{
-						StorageSlots: map[common.Hash]common.Hash{
-							common.Hash{}: common.Hash{31: 2},
-						},
-					},
-				},
-			}
+				txOptions := policy.TxOptions{BlockNumberMin: big.NewInt(1), BlockNumberMax: big.NewInt(10)}
 				if err := t.eth.SendRawTransactionConditional(ctx, hexData, txOptions); err != nil {
 					return err
 				}
